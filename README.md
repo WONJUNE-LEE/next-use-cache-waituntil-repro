@@ -49,3 +49,10 @@ pattern surfaced as `AbortError: This operation was aborted`, and a loader with 
   `executeRevalidates` copies the current `pendingRevalidateWrites` into the promise handed to `waitUntil`.
 - Regenerations (and the `saveToCacheHandler` / tiered-handler writes after them) pushed later, from a `"use cache"`
   read inside a Suspense boundary that resolves during streaming, are never registered with `waitUntil`.
+
+## Fix Applied (`fix/use-cache-waituntil` branch)
+
+This branch applies a pnpm patch (`patches/next@16.3.6.patch`) to Next.js 16.3.6:
+- Registers any `combinedSetPromise`, `revalidatePromise`, and tiered cache handler `pending` syncs with `workStore.afterContext?.waitUntil?.(promise.catch(() => {}))` at the time they are pushed to `workStore.pendingRevalidateWrites`.
+- This ensures promises triggered during or after streaming (such as background cache regenerations inside Suspense boundaries) are properly tracked by the serverless platform runtime (`waitUntil`), allowing regenerations to run to completion even after the initial response stream finishes.
+

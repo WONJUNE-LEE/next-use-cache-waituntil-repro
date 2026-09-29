@@ -4,13 +4,16 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  next@16.3.6: fb13d9092347cec07f93e7c3cc9bfc221cb93986220baafe4c12b42a2ed5a335
+
 importers:
 
   .:
     dependencies:
       next:
         specifier: 16.3.6
-        version: 16.3.6(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        version: 16.3.6(patch_hash=fb13d9092347cec07f93e7c3cc9bfc221cb93986220baafe4c12b42a2ed5a335)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react:
         specifier: 19.3.0
         version: 19.3.0
@@ -492,7 +495,7 @@ snapshots:
 
   nanoid@3.3.19: {}
 
-  next@16.3.6(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  next@16.3.6(patch_hash=fb13d9092347cec07f93e7c3cc9bfc221cb93986220baafe4c12b42a2ed5a335)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:
       '@next/env': 16.3.6
       '@swc/helpers': 0.5.23

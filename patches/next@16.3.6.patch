@@ -1,0 +1,64 @@
+diff --git a/dist/esm/server/use-cache/tiered-cache-handler.js b/dist/esm/server/use-cache/tiered-cache-handler.js
+index 192f03b407afa73875cdbb9ba5f63d7ba70bb34a..e3ac5d5f5bf00fba0cdc6b35358825ac7ff0015e 100644
+--- a/dist/esm/server/use-cache/tiered-cache-handler.js
++++ b/dist/esm/server/use-cache/tiered-cache-handler.js
+@@ -45,6 +45,7 @@ import { cloneCacheEntry } from './clone-cache-entry';
+         if (workStore) {
+             workStore.pendingRevalidateWrites ??= [];
+             workStore.pendingRevalidateWrites.push(pending);
++            workStore.afterContext?.waitUntil?.(pending.catch(()=>{}));
+         }
+     }
+     return {
+diff --git a/dist/esm/server/use-cache/use-cache-wrapper.js b/dist/esm/server/use-cache/use-cache-wrapper.js
+index bbe20b7dcf5d8c9c2c9c87a6d05f6ae03b1109c7..c2025c0ee4a593afca2668eea168937d8af0b657 100644
+--- a/dist/esm/server/use-cache/use-cache-wrapper.js
++++ b/dist/esm/server/use-cache/use-cache-wrapper.js
+@@ -346,6 +346,7 @@ function saveToCacheHandler(cacheHandler, workStore, id, cacheHandlerKeyBase, sa
+     });
+     workStore.pendingRevalidateWrites ??= [];
+     workStore.pendingRevalidateWrites.push(combinedSetPromise);
++    workStore.afterContext?.waitUntil?.(combinedSetPromise.catch(()=>{}));
+     // A cross-request joiner reads its recomputed specific key only after it has
+     // awaited this entry's metadata, so gate the metadata on the writes landing:
+     // that guarantees the entry is present when the joiner re-reads. A failed
+@@ -2414,6 +2415,7 @@ export async function cache(kind, id, boundArgsLength, originalFn, args) {
+                         });
+                         workStore.pendingRevalidateWrites ??= [];
+                         workStore.pendingRevalidateWrites.push(revalidatePromise);
++                        workStore.afterContext?.waitUntil?.(revalidatePromise.catch(()=>{}));
+                     }
+                 }
+             }
+diff --git a/dist/server/use-cache/tiered-cache-handler.js b/dist/server/use-cache/tiered-cache-handler.js
+index 9e4ff7eebe30769252f5316ab0ada3012f07fd73..c7ca7add6fbbfce71b8cd2545c395eb946fe65da 100644
+--- a/dist/server/use-cache/tiered-cache-handler.js
++++ b/dist/server/use-cache/tiered-cache-handler.js
+@@ -41,6 +41,7 @@ function createTieredCacheHandler(front, backing) {
+         if (workStore) {
+             workStore.pendingRevalidateWrites ??= [];
+             workStore.pendingRevalidateWrites.push(pending);
++            workStore.afterContext?.waitUntil?.(pending.catch(()=>{}));
+         }
+     }
+     return {
+diff --git a/dist/server/use-cache/use-cache-wrapper.js b/dist/server/use-cache/use-cache-wrapper.js
+index e5f799533bcee26b49a10efd0c4bc8a3b5405480..81487538428ef0033781a2c914866025134b1ec5 100644
+--- a/dist/server/use-cache/use-cache-wrapper.js
++++ b/dist/server/use-cache/use-cache-wrapper.js
+@@ -402,6 +402,7 @@ function saveToCacheHandler(cacheHandler, workStore, id, cacheHandlerKeyBase, sa
+     });
+     workStore.pendingRevalidateWrites ??= [];
+     workStore.pendingRevalidateWrites.push(combinedSetPromise);
++    workStore.afterContext?.waitUntil?.(combinedSetPromise.catch(()=>{}));
+     // A cross-request joiner reads its recomputed specific key only after it has
+     // awaited this entry's metadata, so gate the metadata on the writes landing:
+     // that guarantees the entry is present when the joiner re-reads. A failed
+@@ -2470,6 +2471,7 @@ async function cache(kind, id, boundArgsLength, originalFn, args) {
+                         });
+                         workStore.pendingRevalidateWrites ??= [];
+                         workStore.pendingRevalidateWrites.push(revalidatePromise);
++                        workStore.afterContext?.waitUntil?.(revalidatePromise.catch(()=>{}));
+                     }
+                 }
+             }
